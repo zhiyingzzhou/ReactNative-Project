@@ -7,6 +7,10 @@ import AreaJson from '../../utils/area';
 
 export default class ProductDetailList extends Component {
 
+	static defaultProps = {
+		data: {}
+	};
+
 	state = {
 		pickedValue: ["江西", "上饶", "上饶县"]
 	};
@@ -41,22 +45,40 @@ export default class ProductDetailList extends Component {
         Picker.show();
 	}
 
+	_getCustomAttrText = customAttr => {
+		let str = '';
+		customAttr.map( (item,index)=>{
+			str += item.text;
+			if(customAttr.length > 1&&index<customAttr.length-1){
+				str += '/';
+			}
+		});
+		return '选择 : '+str;
+	}
+
 	render() {
-		const {pickedValue} = this.state;
-		const {data,navigator} = this.props;
+		const {pickedValue} = this.state,
+		{data,navigator,showModal} = this.props,
+		customAttr = data&&data.customAttr&&data.customAttr.length > 0 ? JSON.parse(data.customAttr) : [];
 		return 	(
 					<View>
+						{customAttr.length > 0 &&
+							<Item 
+								title={this._getCustomAttrText(customAttr)}
+								link={true}
+								style={{
+									marginTop: 5
+								}}
+								onPress={showModal}
+							/>
+						}
 						<Item 
-							title="尺码:170/92B/M,颜色分类:深灰色"
+							title='送至 '
 							link={true}
 							style={{
-								marginVertical: 5
+								marginTop: 5
 							}}
-						/>
-						<Item 
-							title='送至'
-							link={true}
-							onPress={()=>this._showAreaPicker()}
+							onPress={this._showAreaPicker}
 					 	>
 					 		<View style={{
 					 			position:'absolute',
@@ -72,12 +94,15 @@ export default class ProductDetailList extends Component {
 						<Item 
 							title='暂无评论'
 							style={{
-								marginVertical: 5,
+								marginTop: 5,
 							}}
 					 	/>
 						<Item 
 							title='商品详情'
 							link={true}
+							style={{
+					 			marginTop: 5
+					 		}}
 							onPress={()=>{
 								navigator.push({
 									title:'商品详情',
@@ -88,7 +113,7 @@ export default class ProductDetailList extends Component {
 					 	/>
 					 	<Item 
 					 		title='商品编号'
-					 		after={data.serialNumber}
+					 		after={data.serialNumber ||　''}
 					 		style={{
 					 			marginVertical: 5
 					 		}}

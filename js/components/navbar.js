@@ -1,7 +1,8 @@
 import React , { Component , PropTypes } from 'react';
-import { View , Text , StyleSheet } from 'react-native';
+import { View , Text , StyleSheet , TouchableOpacity } from 'react-native';
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Colors,Size } from '../common';
 
 const TitleShape = {
 	title:PropTypes.string.isRequired,
@@ -13,6 +14,22 @@ const ButtonShape = {
 	title: PropTypes.string.isRequired,
 	style: PropTypes.oneOfType([PropTypes.object , PropTypes.array , PropTypes.number]),
 	tintColor: PropTypes.string
+}
+
+class TouchWrapper extends Component {
+	_onPressHandler = () => {
+		const {onPress} = this.props;
+		if(onPress){
+			onPress();
+		}
+	}
+	render() {
+		return (
+			<TouchableOpacity onPress={this._onPressHandler}>
+				{this.props.children}
+			</TouchableOpacity>
+		);
+	}
 }
 
 export default class NavbarComponent extends Component {
@@ -34,6 +51,8 @@ export default class NavbarComponent extends Component {
 		])
 	};
 
+	
+
 	getButtonElement = (data={}) => {
 		if(!!data.props) {
 			return (
@@ -45,13 +64,21 @@ export default class NavbarComponent extends Component {
 		const colorStyle = data.tintColor ? {color:data.tintColor} : null;
 		const style = data.style ? data.style : styles.navBarButtonText;
 
-		return (
+		const rightButtonElement = (
 			<View style={styles.navBarButtonContainer}>
 				<Text style={[style,colorStyle,]}>
 					{data.title}
 				</Text>
 			</View>
-		)
+		);
+
+		if(data.onPress){
+			return 	<TouchWrapper onPress={data.onPress}>
+						{rightButtonElement}
+					</TouchWrapper>
+		}else{
+			return rightButtonElement;
+		}
 	}
 
 	getTitleElement = (data) => {
@@ -79,8 +106,8 @@ export default class NavbarComponent extends Component {
 	}
 }
 
-const NavbarColor = '#e74c3c',
-NavbarHeight = 44;
+const NavbarColor = Colors.navbarColor,
+NavbarHeight = Size.navbarHeight;
 
 const styles = StyleSheet.create({
 	navBar: {

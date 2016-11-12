@@ -1,9 +1,20 @@
 import React , { Component } from 'react';
-import { View , Text , StyleSheet , Image } from 'react-native';
+import { View , Text , StyleSheet , Image , TouchableOpacity ,TouchableNativeFeedback } from 'react-native';
 import Swiper from 'react-native-swiper';
 import U from '../../utils/util';
 
 export default class CategoryRow extends Component {
+
+	_jumpToCategoryPage = item => {
+		const {navigator} = this.props;
+		navigator.push({
+			title:item.name,
+			name:'product-category',
+			params:{
+				categoryId:item.id
+			}
+		});
+	}
 
 	_renderCateRow(){
 		let element = [];
@@ -12,10 +23,13 @@ export default class CategoryRow extends Component {
 		for(let i=0;i<rowNum;i++){
 			let rowData = data.slice(pageIndex*10+i*5,pageIndex*10+i*5+5);
 			element.push(
-					rowData.map((item,index)=>{
-						return 	<View key={'_categoryItem_'+index} style={[{
-									width: U.getScreenWidth()/5
-								},styles.cateItem]}>
+				rowData.map((item,index)=>{
+					return 	<TouchableNativeFeedback
+								onPress={()=>this._jumpToCategoryPage(item)}
+							>
+								<View 
+									key={'_categoryItem_'+index} 
+									style={[{width: U.getScreenWidth()/5},styles.cateItem]}>
 									<Image
 										source={{uri:item.icon}}
 										style={{
@@ -28,7 +42,8 @@ export default class CategoryRow extends Component {
 										marginTop: 5
 									}}>{item.name}</Text>
 								</View>
-					})
+							</TouchableNativeFeedback>
+				},this)
 			)
 		}
 		return element;

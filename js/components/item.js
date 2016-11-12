@@ -1,7 +1,7 @@
 import React , { Component , PropTypes } from 'react';
 import { View , Text , StyleSheet , TouchableHighlight } from 'react-native';
 
-import Icon from 'react-native-vector-icons/Entypo';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 export default class ItemCompoennt extends Component {
 
@@ -39,8 +39,8 @@ export default class ItemCompoennt extends Component {
 									}
 									{link&&
 										<Icon 
-											name="chevron-small-right"
-											size={24}
+											name="ios-arrow-forward"
+											size={20}
 											color="#ccc"
 										/>
 									}

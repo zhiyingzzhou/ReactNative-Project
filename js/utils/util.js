@@ -1,5 +1,6 @@
-  import {Dimensions} from 'react-native';
-
+  import {Dimensions,StatusBar,Platform} from 'react-native';
+  import C from '../config/config';
+  
   module.exports = (function(){
 	let Util = () => {
 		return new Util.prototype.init();
@@ -10,23 +11,61 @@
 		init(){
 			return this;
 		},
-		serialize(url,params){
-			let tmpArr = [];
-			if(arguments.length == 0){
-				throw new Error('serialize method must have at least one parameter!'+
-				'\nerror position at : util.js');
+		serialize(url: string,params: Object){
+			let tmpArr = [] , getParams = '';
+			if(arguments.length === 0){
+				throw new Error(`serialize method must have at least one parameter!\nerror position at : util.js`);
 			}
-			for(let i in params){
-				let val = typeof params[i] === 'object' ? JSON.stringify(params[i]) : params[i];
-				tmpArr.push(i+'='+encodeURIComponent(val));
+			if(params&&typeof params === 'object'){
+				for(let i in params){
+					tmpArr.push(i+'='+encodeURIComponent(params[i]));
+					getParams = '?'+tmpArr.join('&');
+				}
 			}
-			return 'https://www.maxwon.cn/1.0/'+url+'?'+tmpArr.join('&');
+			return C.url+url+getParams;
 		},
 		getScreenWidth(){
 			return Dimensions.get('window').width;
 		},
 		getScreenHeight(){
 			return Dimensions.get('window').height;
+		},
+		getPageHeight() {
+			if(Platform.OS === 'android'){
+				const {currentHeight} = StatusBar;
+				return Dimensions.get('window').height - currentHeight;
+			}else{
+				throw new Error(`In ios device can't get device StatusBar height!`);				
+			}
+		},
+		get(url: string,params: Object,callback: Function,catchFun: Function) {
+			//封装的get请求
+			if(typeof url === 'function'){
+				throw new Error('must hava url parameter!');
+			}
+			if(typeof params === 'function'){
+				callback = params;
+			};
+			if(typeof params === 'function' && typeof callback === 'function'){
+				callback = params;
+				catchFun = callback;
+			}
+			const parseUrl = this.serialize(url,params);
+			fetch(parseUrl,{
+				headers: {
+					'X-ML-APIKey':C.APIKey,
+					'X-ML-AppId':C.AppId
+				}
+			})
+			.then(response => response.json())
+			.then(responseData => callback ? callback(responseData) : null)
+			.catch(error=>{
+				if(catchFun){
+					catchFun();
+				}else{
+					console.log('Error:network request failed!');
+				}
+			});
 		}
 	}
 

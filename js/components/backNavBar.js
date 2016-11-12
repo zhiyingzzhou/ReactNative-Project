@@ -1,5 +1,5 @@
 import React , { Component , PropTypes } from 'react';
-import {View,Text,TouchableHighlight,StyleSheet} from 'react-native';
+import {View,Text,TouchableOpacity,StyleSheet} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Navbar from './navbar';
 
@@ -26,12 +26,12 @@ export default class BackNavbar extends Component {
 	}
 
 	render() {
-		const {title,backText,onPress} = this.props;
+		const {title,backText,onPress,rightButton} = this.props;
 
 		return (
 			<Navbar 
 				leftButton={
-					<TouchableHighlight onPress={this.handlePress} underlayColor="#ccc">
+					<TouchableOpacity onPress={this.handlePress}>
 						<View style={styles.navBarBackContainer}>
 							<Ionicons 
 								name='ios-arrow-back'
@@ -41,9 +41,10 @@ export default class BackNavbar extends Component {
 							</Ionicons>
 							<Text style={styles.navBarBackText}>{backText}</Text>
 						</View>
-					</TouchableHighlight>
+					</TouchableOpacity>
 				}
 				title={{title:title}}
+				rightButton={rightButton}
 			/>
 		);
 	}
