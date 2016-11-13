@@ -3,12 +3,12 @@ import {
 	View , 
 	Text , 
 	ListView , 
-	StyleSheet } from 'react-native';
+	StyleSheet,
+	InteractionManager } from 'react-native';
 import {
 	Page,
 	BackNavBar,
-	ScrollViewWithRefreshControl,
-	ActivityIndicator} from '../components';
+	ScrollViewWithRefreshControl} from '../components';
 
 import {CategoryTab} from '../page-components/product-category';
 import ProductItem from '../page-components/common/product-item';
@@ -23,21 +23,24 @@ export default class ProductCategoryPage extends Component {
 			{name:'销量',active:false,order:0,field:'saleCount'}
 		],
 		item:{name:'上架时间',active:true,order:0,field:'onlineTime'},
-		isRefreshing: false,
-		animating:false,
+		isRefreshing: true,
+		loaded: false,
 		data: new ListView.DataSource({
 					rowHasChanged:(r1,r2)=> r1 !== r2 
 				})
 	};
 	componentDidMount() {
-		setTimeout(()=>this.fetchData(this.state.item),0);
+		InteractionManager.runAfterInteractions(()=>{
+			this.fetchData(this.state.item);
+		});
 	}
 	shouldComponentUpdate(nextProps, nextState) {
-		return nextProps !== this.props || nextState !== this.state;
+		return nextState !== this.state;
 	}
 	fetchData = item => {
 		this.setState({
-			isRefreshing: true
+			isRefreshing: true,
+			loaded: false
 		});
 		const {params} = this.props,
 		{order,field} = item,
@@ -53,7 +56,8 @@ export default class ProductCategoryPage extends Component {
 				this.setState({
 					data:this.state.data.cloneWithRows(data.results),
 					item: item,
-					isRefreshing:false
+					isRefreshing:false,
+					loaded: true
 				});
 			},500);
 		},()=>{
@@ -68,12 +72,6 @@ export default class ProductCategoryPage extends Component {
 		this.fetchData(item);
 	}
 
-	_showIndicator = animating => {
-		this.setState({
-			animating:animating
-		});
-	}
-
 	_renderRow = (rowData,sectionID,rowID) => {
 		const {data} = this.state;
 		{/*如果为列表中的最后一行,不添加bottom-border*/}
@@ -82,13 +80,11 @@ export default class ProductCategoryPage extends Component {
 					data={rowData}
 					style={style}
 					{...this.props}
-					onRequestStart={this._showIndicator.bind(this,true)}
-					onRequestEnd={this._showIndicator.bind(this,false)}
 				/>
 	}
 
 	render() {
-		const {tabs,data,isRefreshing,animating} = this.state;
+		const {tabs,data,isRefreshing,loaded} = this.state;
 		return (
 			<Page>
 				<BackNavBar {...this.props} />
@@ -100,7 +96,7 @@ export default class ProductCategoryPage extends Component {
 							tabs={tabs}
 							subscribeEvent={this.fetchData} 
 						/>
-						{(!isRefreshing&&data._cachedRowCount === 0)
+						{(loaded&&!isRefreshing&&data._cachedRowCount === 0)
 							?
 							<View style={styles.emtpyData}>
 								<Text style={styles.emptyText}>暂无数据</Text>
@@ -114,9 +110,6 @@ export default class ProductCategoryPage extends Component {
 							/>
 						}
 					</ScrollViewWithRefreshControl>
-				{animating&&
-					<ActivityIndicator animating={animating} />
-				}
 			</Page>
 		);
 	}

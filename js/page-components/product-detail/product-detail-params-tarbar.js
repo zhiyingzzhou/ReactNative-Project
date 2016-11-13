@@ -1,5 +1,6 @@
 import React , { Component } from 'react';
-import {View,Text,StyleSheet,TouchableOpacity,ToastAndroid} from 'react-native';
+import {View,Text,StyleSheet,TouchableOpacity,ToastAndroid,InteractionManager} from 'react-native';
+import Storage from 'react-native-storage';
 
 import U from '../../utils/util';
 const width = U.getScreenWidth(),
@@ -8,11 +9,22 @@ height = U.getScreenHeight();
 export default class ProductDetailParamsTarbar extends Component {
 
 	_onAddProduct = () => {
-		const {data,countNumber,selectedAttr} = this.props;
-		if(!countNumber){
-			ToastAndroid.show('购买数量不能为0!',ToastAndroid.SHORT);
-			return false;
-		}
+		const {data,buyNumber,selectedAttrKeyArr} = this.props;
+		InteractionManager.runAfterInteractions(()=>{
+			if(!buyNumber){
+				ToastAndroid.show('购买数量不能为0!',ToastAndroid.SHORT);
+				return false;
+			}
+			console.log(Storage);
+			Storage.getAllDataForKey('cart')
+			.then(ret=>{
+				console.log(ret);
+			})
+			.catch(err=>{
+				console.log(err);
+			});
+		});
+		
 	}
 
 	render() {

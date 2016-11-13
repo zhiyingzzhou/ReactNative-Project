@@ -2,8 +2,13 @@ import React , { Component } from 'react';
 import { View , StyleSheet } from 'react-native';
 import Swiper from 'react-native-swiper';
 import CategoryRow from './category-row';
+
 export default class Category extends Component {
 	
+	shouldComponentUpdate(nextProps, nextState) {
+		return  this.props.data !== nextProps.data;
+	}
+
 	_renderCategory = () => {
 		let element = [];
 		const {navigator,data} = this.props;

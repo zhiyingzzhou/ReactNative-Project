@@ -1,9 +1,21 @@
 import React , { Component } from 'react';
 import {View,Image,TouchableWithoutFeedback} from 'react-native';
 import Swiper from 'react-native-swiper';
-import FetchProductItemData from '../common/fetchProductDetailWithJumpPage';
 
 export default class Banner extends Component {
+
+	shouldComponentUpdate(nextProps, nextState) {
+		return nextProps.data !== this.props.data;
+	}
+
+	_jumpToDetailPage = productId => {
+		const {navigator} = this.props;
+		navigator.push({
+			title:'商品详情',
+			name:'product-detail',
+			params:{productId:productId}
+		});
+	}
 
 	render() {
 		const {data} = this.props;
@@ -27,7 +39,7 @@ export default class Banner extends Component {
 						return (
 								<TouchableWithoutFeedback
 									key={'_banner_'+index}
-									onPress={FetchProductItemData.bind(this,item.id)}
+									onPress={this._jumpToDetailPage.bind(this,item.id)}
 								>
 									<View>
 										<Image 

@@ -70,7 +70,7 @@ export default class SetUp extends React.Component {
 				ref="navigator"
 				configureScene = {(route)=>{
 					if(route.name == 'product-category'){
-						return Navigator.SceneConfigs.FadeAndroid;
+						return Navigator.SceneConfigs.PushFromRight;
 					}
 					return Navigator.SceneConfigs.PushFromRight;
 				}}

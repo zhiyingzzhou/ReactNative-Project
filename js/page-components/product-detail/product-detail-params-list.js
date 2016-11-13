@@ -6,51 +6,52 @@ import {Colors} from '../../common';
 export default class ProductDetailParamsList extends Component {
 
 	state = {
-		price: 0,
 		customAttr:[]
 	};
 
-	componentDidMount() {
-		setTimeout(()=>{
-			let selectedAttr = [];
-			const {data} = this.props,
-			customAttr = data&&data.customAttr&&data.customAttr.length > 0 ? JSON.parse(data.customAttr) : [];
-			customAttr.map(item=>{
-				selectedAttr.push(item.val[0].key);
-			});
-			if(selectedAttr.length > 0){
-				this._getPrice(selectedAttr);
-			}
-			this.setState({
-				customAttr:customAttr,
-				selectedAttr:selectedAttr
-			});
-		},250);
+	shouldComponentUpdate(nextProps, nextState) {
+		return nextProps.data !== this.props.data || nextState !== this.state;
 	}
 
-	_getPrice = selectedAttr => {
+	componentDidMount() {
+		let selectedAttrKeyArr = [];
+		const {data} = this.props;
+		customAttr = data&&data.customAttr&&data.customAttr.length > 0 ? JSON.parse(data.customAttr) : [];
+		customAttr.map(item=>{
+			selectedAttrKeyArr.push(item.val[0].key);
+		});
+		if(selectedAttrKeyArr.length > 0){
+			this._getPrice(selectedAttrKeyArr);
+		}
+		this.setState({
+			customAttr:customAttr,
+			selectedAttrKeyArr:selectedAttrKeyArr
+		});
+	}
+
+	_getPrice = selectedAttrKeyArr => {
 		const {getPrice} = this.props;
 		if(getPrice){
-			getPrice(selectedAttr);
+			getPrice(selectedAttrKeyArr);
 		}
 	}
 
 	_changeParams = (item,i) => {
-		const {selectedAttr} = this.state;
-		if(selectedAttr[i] !== item.key){
-			selectedAttr[i] = item.key;
-			this._getPrice(selectedAttr);
+		const {selectedAttrKeyArr} = this.state;
+		if(selectedAttrKeyArr[i] !== item.key){
+			selectedAttrKeyArr[i] = item.key;
+			this._getPrice(selectedAttrKeyArr);
 			this.setState({
-				selectedAttr: selectedAttr
+				selectedAttrKeyArr: selectedAttrKeyArr
 			});
 		}
 	}
 
 	_renderItem = (arr,i) => {
-		const {selectedAttr} = this.state;
+		const {selectedAttrKeyArr} = this.state;
 		let Element = [];
 		arr.map((item,index)=>{
-			const backgroundColor = item.key === selectedAttr[i] ? Colors.themeColor : '#ccc';
+			const backgroundColor = item.key === selectedAttrKeyArr[i] ? Colors.themeColor : '#ccc';
 			Element.push(
 				<TouchableWithoutFeedback 
 						key={'_params_item_'+index} 

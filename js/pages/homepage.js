@@ -6,8 +6,7 @@ import _ from 'lodash';
 import {
 	NavBar,
 	Page,
-	ScrollViewWithRefreshControl,
-	ActivityIndicator} from '../components';
+	ScrollViewWithRefreshControl} from '../components';
 import {
 	Banner , 
 	Category , 
@@ -16,7 +15,6 @@ import U from '../utils/util';
 import SplashScreen from 'react-native-splash-screen'
 export default class HomePage extends Component {
 	state = {
-		animating: false,
 		bannerData: [],
 		categoryData: [],
 		listData: new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2}),
@@ -42,12 +40,6 @@ export default class HomePage extends Component {
 		this.getListData();
 	}
 
-	_setIndicatorVisible = visibleType => {
-		this.setState({
-			animating:visibleType
-		});
-	}
-
 	_onRefresh = () => {
 		this.setState({
 			bannerLoaded:false,
@@ -57,7 +49,7 @@ export default class HomePage extends Component {
 		this.fetchData();
 	}
 	render() {
-		const {animating,bannerData,categoryData,
+		const {bannerData,categoryData,
 			listData,bannerLoaded,categoryLoaded,listLoaded} = this.state;
 		return (
 			<Page>
@@ -68,26 +60,25 @@ export default class HomePage extends Component {
 					refreshing={!bannerLoaded&&!categoryLoaded&&!listLoaded}
 					onRefresh={this._onRefresh}
 				>
-					<Banner 
-						{...this.props}
-						onRequestStart={this._setIndicatorVisible.bind(this,true)}
-						onRequestEnd={this._setIndicatorVisible.bind(this,false)}
-						data={bannerData} 
-					/>
-					<Category 
-						{...this.props} 
-						data={categoryData}
-					/>
-					<ProductList 
-						{...this.props}
-						data={listData}
-						onRequestStart={this._setIndicatorVisible.bind(this,true)}
-						onRequestEnd={this._setIndicatorVisible.bind(this,false)}
-					/>
+					{bannerData.length > 0 && 
+						<Banner 
+							{...this.props}
+							data={bannerData} 
+						/>
+					}
+					{categoryData.length > 0&&
+						<Category 
+							{...this.props} 
+							data={categoryData}
+						/>
+					}
+					{listData._cachedRowCount > 0 &&
+						<ProductList 
+							{...this.props}
+							data={listData}
+						/>
+					}
 				</ScrollViewWithRefreshControl>
-				{animating&&
-					<ActivityIndicator animating={animating} />
-				}
 			</Page>
 		);
 	}

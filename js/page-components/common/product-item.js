@@ -1,7 +1,5 @@
 import React , { Component , PropTypes } from 'react';
 import { View , Text , Image , TouchableHighlight , StyleSheet } from 'react-native';
-import FetchProductItemData from '../common/fetchProductDetailWithJumpPage';
-
 /*
 	本组件接收五个props
 	onRequestStart: 开始请求的时候
@@ -20,10 +18,17 @@ export default class ProductItem extends Component {
 
 	static propTypes = {
 		navigator: PropTypes.object.isRequired,
-		data: PropTypes.object.isRequired,
-		onRequestStart: PropTypes.func,
-		onRequestEnd: PropTypes.func
+		data: PropTypes.object.isRequired
 	};
+
+	_jumpToDetailPage = () => {
+		const {data,navigator} = this.props;
+		navigator.push({
+			title:'商品详情',
+			name:'product-detail',
+			params:{productId:data.id}
+		});
+	}
 
 	render() {
 		const {data,style} = this.props;
@@ -31,7 +36,7 @@ export default class ProductItem extends Component {
 			return null;
 		}
 		return (
-			<TouchableHighlight onPress={FetchProductItemData.bind(this,data.id)} underlayColor="#eee">
+			<TouchableHighlight onPress={this._jumpToDetailPage} underlayColor="#eee">
 				<View style={[styles.container , style]}>
 					<Image 
 						source={{uri:data.coverIcon}}

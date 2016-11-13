@@ -7,8 +7,13 @@ const pageHeight = U.getPageHeight(),
 width = U.getScreenWidth();
 
 export default class ProductDetailParamsHead extends Component {
+
+	shouldComponentUpdate(nextProps, nextState) {
+		return nextProps.priceAndStock !== this.props.priceAndStock;
+	}
+
 	render() {
-		const {data,hideModalHandler,currentSelectedParams} = this.props;
+		const {data,hideModalHandler,priceAndStock} = this.props;
 		return (
 			<View style={styles.container}>
 				<View style={styles.leftContainer}>
@@ -25,12 +30,12 @@ export default class ProductDetailParamsHead extends Component {
 						<Text style={{
 							fontSize: 16
 						}}>
-							¥{Number(currentSelectedParams.price/100).toFixed(2)}
+							¥{Number(priceAndStock.price/100).toFixed(2)}
 						</Text>
 						<Text style={{
 							fontSize: 13
 						}}>
-							库存 {currentSelectedParams.stock}件
+							库存 {priceAndStock.stock}件
 						</Text>
 					</View>
 					<TouchableWithoutFeedback onPress={hideModalHandler}>

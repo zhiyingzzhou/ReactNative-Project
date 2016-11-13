@@ -1,5 +1,5 @@
 import React , { Component } from 'react';
-import { View , Text , TouchableOpacity } from 'react-native';
+import { View , Text , TouchableOpacity , InteractionManager } from 'react-native';
 import { Item } from '../../components';
 import Picker from 'react-native-picker';
 
@@ -10,6 +10,10 @@ export default class ProductDetailList extends Component {
 	static defaultProps = {
 		data: {}
 	};
+
+	shouldComponentUpdate(nextProps, nextState) {
+		return nextProps.data !== this.props.data;
+	}
 
 	state = {
 		pickedValue: ["江西", "上饶", "上饶县"]
@@ -104,10 +108,12 @@ export default class ProductDetailList extends Component {
 					 			marginTop: 5
 					 		}}
 							onPress={()=>{
-								navigator.push({
-									title:'商品详情',
-									name: 'product-detail-webview',
-									params:{detailHTML:data.detail}
+								InteractionManager.runAfterInteractions(()=>{
+									navigator.push({
+										title:'商品详情',
+										name: 'product-detail-webview',
+										params:{detailHTML:data.detail}
+									});
 								});
 							}}
 					 	/>

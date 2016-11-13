@@ -1,5 +1,5 @@
 import React , { Component } from 'react';
-import { View , Text , StyleSheet , Image , TouchableOpacity ,TouchableNativeFeedback } from 'react-native';
+import { View , Text , StyleSheet , Image , TouchableNativeFeedback } from 'react-native';
 import Swiper from 'react-native-swiper';
 import U from '../../utils/util';
 

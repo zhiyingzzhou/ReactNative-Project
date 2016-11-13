@@ -1,5 +1,5 @@
 import React , { Component , PropTypes } from 'react';
-import { View , Text , StyleSheet , TouchableOpacity } from 'react-native';
+import { View , Text , StyleSheet , TouchableOpacity , InteractionManager } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -11,6 +11,10 @@ class CartNumber extends Component {
 	static defaultProps = {
 		number: 8
 	};
+
+	shouldComponentUpdate(nextProps, nextState) {
+		return nextProps !== this.props;
+	}
 
 	static propTypes = {
 		number: PropTypes.number
@@ -35,9 +39,11 @@ export default class ToolBar extends Component {
 	_jumpToCartPage = () => {
 		const {navigator} = this.props;
 		if(navigator){
-			navigator.push({
-				title: '购物车',
-				name: 'cart'
+			InteractionManager.runAfterInteractions(()=>{
+				navigator.push({
+					title: '购物车',
+					name: 'cart'
+				});
 			});
 		}
 	}

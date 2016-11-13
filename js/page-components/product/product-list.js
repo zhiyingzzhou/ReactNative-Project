@@ -2,6 +2,11 @@ import React , { Component } from 'react';
 import { ListView , StyleSheet } from 'react-native';
 import ProductItem from '../common/product-item';
 export default class ProductList extends Component {
+
+	shouldComponentUpdate(nextProps, nextState) {
+		return nextProps.data !== this.props.data;
+	}
+
 	_renderRow = (rowData,sectionID,rowID) => {
 		{/*渲染每一个列表*/}
 		const {data} = this.props;

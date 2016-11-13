@@ -1,11 +1,11 @@
 import React , { Component } from 'react';
 import {View,
 	Text,
-	Animated , 
-	Easing , 
 	StyleSheet,
 	TouchableWithoutFeedback,
-	ScrollView
+	ScrollView ,
+	Modal ,
+	Animated
 } from 'react-native';
 import ProductDetailParamsTarbar from './product-detail-params-tarbar';
 import ProductDetailParamsHead from './product-detail-params-head';
@@ -22,18 +22,9 @@ export default class ProductDetailParams extends Component {
 	};
 
 	state = {
-		top: new Animated.Value(0),
-		currentSelectedParams: {price:0,stock:0},
-		countNumber: 0
+		priceAndStock: {price:0,stock:0},
+		buyNumber: 0
 	};
-
-	componentDidMount() {
-		Animated.timing(this.state.top,{
-			toValue: 1,
-			duration: 200,
-			easing: Easing.linear
-		}).start();
-	}
 
 	_hideModalHandler = () => {
 		const {hideModal} = this.props;
@@ -46,36 +37,37 @@ export default class ProductDetailParams extends Component {
 		return nextProps !== this.props || nextState !== this.state;
 	}
 
-	_getPrice = selectedAttr => {
+	_getPrice = selectedAttrKeyArr => {
 		let price = 0,
 		priceMap = null;
 		const {data} = this.props;
 		priceMap = data.priceMap;
-		selectedAttr.forEach(item=>{
+		selectedAttrKeyArr.forEach(item=>{
 			if(!priceMap.price){
 				priceMap = priceMap[item];
 			}
 		});
 		this.setState({
-			selectedAttr:selectedAttr,
-			currentSelectedParams:priceMap
+			selectedAttrKeyArr:selectedAttrKeyArr,
+			priceAndStock:priceMap
 		});
 	}
 
-	_setProductNumber = num => {
+	_setBuyNumber = num => {
 		this.setState({
-			countNumber:num
+			buyNumber:num
 		});
 	}
 
 	render() {
-		const {top,currentSelectedParams,countNumber,selectedAttr} = this.state;
-		const {data} = this.props;
+		const {priceAndStock,buyNumber,selectedAttrKeyArr} = this.state;
+		const {data,top,modalVisible} = this.props;
+		const style = modalVisible ? {top: 0} : {top: pageHeight};
 		return (
-			<View style={styles.container}>
+			<View style={[styles.container,style]}>
 				<Animated.View style={[styles.animatedView,{
-					top:top.interpolate({
-						inputRange: [0,1],
+					top: top.interpolate({
+						inputRange:[0,1],
 						outputRange: [pageHeight,0]
 					})
 				}]}>
@@ -89,14 +81,16 @@ export default class ProductDetailParams extends Component {
 					<ScrollView style={{
 						backgroundColor: '#FFF',
 					}}>
-						<ProductDetailParamsList 
-							getPrice = {this._getPrice}
-							{...this.props} 
-						/>
+						{Object.getOwnPropertyNames(data).length > 0 &&
+							<ProductDetailParamsList 
+								getPrice = {this._getPrice}
+								{...this.props} 
+							/>
+						}
 						<ProductDetailParamsCountEditor 
-							countNumber={countNumber}
-							setProductNumber={this._setProductNumber}
-							currentSelectedParams={currentSelectedParams} 
+							buyNumber={buyNumber}
+							setBuyNumber={this._setBuyNumber}
+							priceAndStock={priceAndStock} 
 						/>
 					</ScrollView>
 					<View style={{
@@ -108,14 +102,14 @@ export default class ProductDetailParams extends Component {
 					}}>
 					</View>
 					<ProductDetailParamsHead 
-							currentSelectedParams={currentSelectedParams} 
+							priceAndStock={priceAndStock} 
 							{...this.props} 
 							hideModalHandler={this._hideModalHandler} 
 					/>
 					<ProductDetailParamsTarbar
 						{...this.props}
-						countNumber={countNumber}
-						selectedAttr={selectedAttr}
+						buyNumber={buyNumber}
+						selectedAttrKeyArr={selectedAttrKeyArr}
 					/>
 				</Animated.View>
 			</View>
@@ -126,19 +120,15 @@ export default class ProductDetailParams extends Component {
 const styles = StyleSheet.create({
 	container: {
 		position: 'absolute',
-		top: 0,
 		left: 0,
 		right: 0,
 		bottom: 0,
 		backgroundColor: 'rgba(0,0,0,.5)',
-
 	},
 	animatedView: {
-		height: pageHeight,
-		backgroundColor: '#FFF',
 		position: 'absolute',
-		left: 0,
-		right: 0,
-		backgroundColor: 'transparent'
+		height: pageHeight,
+		width: width,
+		backgroundColor: 'transparent',
 	}
 });

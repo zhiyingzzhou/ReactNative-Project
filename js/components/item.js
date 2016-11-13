@@ -1,5 +1,5 @@
 import React , { Component , PropTypes } from 'react';
-import { View , Text , StyleSheet , TouchableHighlight } from 'react-native';
+import { View , Text , StyleSheet , TouchableOpacity } from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
@@ -28,7 +28,7 @@ export default class ItemCompoennt extends Component {
 		const {title,after,style,link} = this.props;
 		return 	(
 					<View style={[style,]}>
-						<TouchableHighlight onPress={()=>this.handleClick()} underlayColor='#CCC'>
+						<TouchableOpacity onPress={()=>this.handleClick()}>
 							<View style={[styles.container,]}>
 								<Text>
 									{title}
@@ -47,7 +47,7 @@ export default class ItemCompoennt extends Component {
 								</View>
 								{this.props.children}
 							</View>
-						</TouchableHighlight>
+						</TouchableOpacity>
 					</View>
 				);
 	}

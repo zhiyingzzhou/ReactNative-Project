@@ -1,5 +1,5 @@
 import React , { Component , PropTypes } from 'react';
-import {View,Text,TouchableOpacity,StyleSheet} from 'react-native';
+import {View,Text,TouchableOpacity,StyleSheet,InteractionManager} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Navbar from './navbar';
 
@@ -17,17 +17,18 @@ export default class BackNavbar extends Component {
 	};
 
 	handlePress = () => {
-		const {onPress,navigator} = this.props;
-		if(onPress){
-			onPress();
-		}else if(navigator &&　navigator.getCurrentRoutes().length > 1){
-			navigator.pop();
-		}
+		InteractionManager.runAfterInteractions(()=>{
+			const {onPress,navigator} = this.props;
+			if(onPress){
+				onPress();
+			}else if(navigator &&　navigator.getCurrentRoutes().length > 1){
+				navigator.pop();
+			}
+		});
 	}
 
 	render() {
 		const {title,backText,onPress,rightButton} = this.props;
-
 		return (
 			<Navbar 
 				leftButton={

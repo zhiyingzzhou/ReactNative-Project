@@ -11,12 +11,15 @@ export default class ProductDetailhead extends Component {
 		},
 	};
 
+	shouldComponentUpdate(nextProps, nextState) {
+		return nextProps.data !== this.props.data;
+	}
+
 	_renderPics(){
 		const {data} = this.props;
 		return  (
 					<Swiper 
-						autoplay={true}
-						autoplayTimeout={5}
+						autoplay={false}
 						height={351}
 						index={0}
 						renderPagination={(index,total,context)=>{

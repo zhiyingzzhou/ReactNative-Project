@@ -1,63 +1,48 @@
 import React , { Component } from 'react';
-import {View,Text,StyleSheet,Animated,Easing,TouchableOpacity,ToastAndroid} from 'react-native';
+import {View,Text,StyleSheet,TouchableOpacity,ToastAndroid} from 'react-native';
 
 import Icon from 'react-native-vector-icons/Ionicons';
 
 export default class ProductDetailParamsCountEditor extends Component {
 
-	state = {
-		fadeIn: new Animated.Value(0)
-	};
-
 	static defaultProps = {
-		countNumber: 0,
-		currentSelectedParams:{stock:0}
+		buyNumber: 0,
+		priceAndStock:{stock:0}
 	};
 
 	shouldComponentUpdate(nextProps, nextState) {
 		return nextProps !== this.props || nextState !== this.state;
 	}
 
-	componentDidMount(){
-		setTimeout(()=>{
-			Animated.timing(this.state.fadeIn,{
-				toValue: 1,
-				duration: 100,
-				easing: Easing.linear
-			}).start();
-		},300);
-	}
-
 	_onAddProduct = () => {
-		const {countNumber,currentSelectedParams} = this.props,
-		{stock} = currentSelectedParams;
-		if( !stock || countNumber === stock ){
+		const {buyNumber,priceAndStock} = this.props,
+		{stock} = priceAndStock;
+		if( !stock || buyNumber === stock ){
 			ToastAndroid.show('库存不足!',ToastAndroid.SHORT);
 		}else{
-			this._setProductNumber(countNumber+1);
+			this._setBuyNumber(buyNumber+1);
 		}
 	}
-	_setProductNumber = num => {
-		const {setProductNumber} = this.props;
-		if(setProductNumber){
-			setProductNumber(num);
+	_setBuyNumber = num => {
+		const {setBuyNumber} = this.props;
+		if(setBuyNumber){
+			setBuyNumber(num);
 		}
 	}
 
 	_onRemoveProduct = () => {
-		const {countNumber} = this.props;
-		if(countNumber > 0){
-			this._setProductNumber(countNumber-1);
+		const {buyNumber} = this.props;
+		if(buyNumber > 0){
+			this._setBuyNumber(buyNumber-1);
 		}
 	}
 
 	render() {
-		const {countNumber} = this.props;
+		const {buyNumber} = this.props;
 		return (
-			<Animated.View style={[styles.spaceBetween,{
+			<View style={[styles.spaceBetween,{
 				paddingHorizontal: 10,
 				marginTop: 10,
-				opacity: this.state.fadeIn
 			}]}>
 				<Text>
 					购买数量
@@ -72,7 +57,7 @@ export default class ProductDetailParamsCountEditor extends Component {
 					<Text style={{
 						marginHorizontal: 8,
 						fontSize: 17
-					}}>{countNumber}</Text>
+					}}>{buyNumber}</Text>
 					<TouchableOpacity onPress={this._onRemoveProduct}>
 						<Icon 
 							name='ios-remove-circle-outline'
@@ -80,7 +65,7 @@ export default class ProductDetailParamsCountEditor extends Component {
 						/>
 					</TouchableOpacity>
 				</View>
-			</Animated.View>
+			</View>
 		);
 	}
 };
