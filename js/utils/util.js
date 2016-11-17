@@ -11,7 +11,7 @@
 		init(){
 			return this;
 		},
-		serialize(url: string,params: Object){
+		serialize(url: string,params: Object): string{
 			let tmpArr = [] , getParams = '';
 			if(arguments.length === 0){
 				throw new Error(`serialize method must have at least one parameter!\nerror position at : util.js`);
@@ -24,13 +24,13 @@
 			}
 			return C.url+url+getParams;
 		},
-		getScreenWidth(){
+		getScreenWidth(): Number{
 			return Dimensions.get('window').width;
 		},
-		getScreenHeight(){
+		getScreenHeight(): Number{
 			return Dimensions.get('window').height;
 		},
-		getPageHeight() {
+		getPageHeight(): Number{
 			if(Platform.OS === 'android'){
 				const {currentHeight} = StatusBar;
 				return Dimensions.get('window').height - currentHeight;
@@ -38,7 +38,7 @@
 				throw new Error(`In ios device can't get device StatusBar height!`);				
 			}
 		},
-		get(url: string,params: Object,callback: Function,catchFun: Function) {
+		get(url: string,params: Object,callback: Function,catchFun: Function): void{
 			//封装的get请求
 			if(typeof url === 'function'){
 				throw new Error('must hava url parameter!');

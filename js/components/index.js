@@ -6,6 +6,8 @@ import Item from './item';
 import ScrollViewWithRefreshControl from './ScrollViewWithRefreshControl';
 import ActivityIndicator from './ActivityIndicator';
 import CheckBox from './checkbox';
+import SwipeOut from './swipeout';
+import Mask from './mask';
 
 module.exports = {
 	NavBar,
@@ -15,5 +17,7 @@ module.exports = {
 	Item,
 	ScrollViewWithRefreshControl,
 	ActivityIndicator,
-	CheckBox
+	CheckBox,
+	SwipeOut,
+	Mask
 }

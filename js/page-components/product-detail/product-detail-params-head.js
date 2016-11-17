@@ -1,8 +1,8 @@
 import React , { Component } from 'react';
-import {View,Text,Image,StyleSheet,TouchableWithoutFeedback} from 'react-native';
+import {View,Text,Image,StyleSheet,TouchableWithoutFeedback,PixelRatio} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import U from '../../utils/util';
-
+import {Colors} from '../../common';
 const pageHeight = U.getPageHeight(),
 width = U.getScreenWidth();
 
@@ -58,8 +58,8 @@ const styles = StyleSheet.create({
 		top: pageHeight*.2-32,
 		paddingHorizontal: 10,
 		flexDirection: 'row',
-		borderBottomWidth: .6,
-		borderColor: '#CCC',
+		borderBottomWidth: 1/PixelRatio.get(),
+		borderColor: Colors.weakGrayColor,
 		width: width,
 		height: 118,
 	},

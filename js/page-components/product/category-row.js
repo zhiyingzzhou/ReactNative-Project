@@ -16,12 +16,12 @@ export default class CategoryRow extends Component {
 		});
 	}
 
-	_renderCateRow(){
+	_renderCateRow(): Array{
 		let element = [];
 		const {data,pageIndex} = this.props;
-		const rowNum = Math.ceil(data.length/5);
+		const rowNum: number= Math.ceil(data.length/5);
 		for(let i=0;i<rowNum;i++){
-			let rowData = data.slice(pageIndex*10+i*5,pageIndex*10+i*5+5);
+			let rowData: Array= data.slice(pageIndex*10+i*5,pageIndex*10+i*5+5);
 			element.push(
 				rowData.map((item,index)=>{
 					return 	<TouchableNativeFeedback

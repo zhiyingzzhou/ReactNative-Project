@@ -5,7 +5,7 @@ import {Page,BackNavBar} from '../components';
 export default class ProductDetailTest extends Component {
 	render() {
 		const {params} = this.props;
-		const data = params.detailHTML === '' ? `<p style="text-align:center;">无数据</p>` : params.detailHTML;
+		const data: string= params.detailHTML === '' ? `<p style="text-align:center;">无数据</p>` : params.detailHTML;
 		return 	(
 					<Page>
 						<BackNavBar {...this.props} />

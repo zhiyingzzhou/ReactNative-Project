@@ -9,7 +9,7 @@ export default class Category extends Component {
 		return  this.props.data !== nextProps.data;
 	}
 
-	_renderCategory = () => {
+	_renderCategory = (): Array=> {
 		let element = [];
 		const {navigator,data} = this.props;
 		const pageNum = Math.ceil(data.length/10);

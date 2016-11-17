@@ -4,7 +4,7 @@ import {
 	Text , 
 	ListView , 
 	StyleSheet,
-	InteractionManager } from 'react-native';
+	InteractionManager , PixelRatio } from 'react-native';
 import {
 	Page,
 	BackNavBar,
@@ -14,6 +14,8 @@ import {CategoryTab} from '../page-components/product-category';
 import ProductItem from '../page-components/common/product-item';
 
 import U from '../utils/util';
+
+import {Colors} from '../common'
 
 export default class ProductCategoryPage extends Component {
 	state = {
@@ -72,10 +74,10 @@ export default class ProductCategoryPage extends Component {
 		this.fetchData(item);
 	}
 
-	_renderRow = (rowData,sectionID,rowID) => {
+	_renderRow = (rowData: Object,sectionID: string,rowID: string) => {
 		const {data} = this.state;
 		{/*如果为列表中的最后一行,不添加bottom-border*/}
-		const style = rowID != data._cachedRowCount - 1 ? styles.containerWithBottom : null;
+		const style: Object= rowID != data._cachedRowCount - 1 ? styles.containerWithBottom : null;
 		return <ProductItem 
 					data={rowData}
 					style={style}
@@ -88,28 +90,28 @@ export default class ProductCategoryPage extends Component {
 		return (
 			<Page>
 				<BackNavBar {...this.props} />
-					<ScrollViewWithRefreshControl
-						refreshing = {isRefreshing}
-						onRefresh={this._onRefresh}
-					>
-						<CategoryTab 
-							tabs={tabs}
-							subscribeEvent={this.fetchData} 
+				<ScrollViewWithRefreshControl
+					refreshing = {isRefreshing}
+					onRefresh={this._onRefresh}
+				>
+					<CategoryTab 
+						tabs={tabs}
+						subscribeEvent={this.fetchData} 
+					/>
+					{(loaded&&!isRefreshing&&data._cachedRowCount === 0)
+						?
+						<View style={styles.emtpyData}>
+							<Text style={styles.emptyText}>暂无数据</Text>
+						</View>
+						: 
+						<ListView 
+							dataSource={data}
+							renderRow={this._renderRow}
+							style={styles.listview}
+							enableEmptySections={true}
 						/>
-						{(loaded&&!isRefreshing&&data._cachedRowCount === 0)
-							?
-							<View style={styles.emtpyData}>
-								<Text style={styles.emptyText}>暂无数据</Text>
-							</View>
-							: 
-							<ListView 
-								dataSource={data}
-								renderRow={this._renderRow}
-								style={styles.listview}
-								enableEmptySections={true}
-							/>
-						}
-					</ScrollViewWithRefreshControl>
+					}
+				</ScrollViewWithRefreshControl>
 			</Page>
 		);
 	}
@@ -120,8 +122,8 @@ const styles = StyleSheet.create({
 		backgroundColor: '#FFF'
 	},
 	containerWithBottom: {
-		borderBottomWidth: 0.5,
-		borderColor: '#ccc',
+		borderBottomWidth: 1/PixelRatio.get(),
+		borderColor: Colors.weakGrayColor,
 		borderStyle: 'solid'
 	},
 	emtpyData: {

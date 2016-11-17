@@ -6,5 +6,5 @@ import SetUp from './js/setup';
 // import Modal from './test/modal'
 // import Animated from './test/animated'
 InitialStorage();
-
 AppRegistry.registerComponent('shop',() => SetUp );
+

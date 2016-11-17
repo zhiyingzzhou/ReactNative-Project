@@ -1,5 +1,5 @@
 import React , { Component } from 'react';
-import {View,Text,StyleSheet,TouchableWithoutFeedback} from 'react-native';
+import {View,Text,StyleSheet,TouchableWithoutFeedback,PixelRatio} from 'react-native';
 
 import {Colors} from '../../common';
 
@@ -15,8 +15,8 @@ export default class ProductDetailParamsList extends Component {
 
 	componentDidMount() {
 		let selectedAttrKeyArr = [];
-		const {data} = this.props;
-		customAttr = data&&data.customAttr&&data.customAttr.length > 0 ? JSON.parse(data.customAttr) : [];
+		const {data} = this.props,
+	 	customAttr: Array= data&&data.customAttr&&data.customAttr.length > 0 ? JSON.parse(data.customAttr) : [];
 		customAttr.map(item=>{
 			selectedAttrKeyArr.push(item.val[0].key);
 		});
@@ -29,7 +29,7 @@ export default class ProductDetailParamsList extends Component {
 		});
 	}
 
-	_getPrice = selectedAttrKeyArr => {
+	_getPrice = (selectedAttrKeyArr: Array) => {
 		const {getPrice} = this.props;
 		if(getPrice){
 			getPrice(selectedAttrKeyArr);
@@ -47,10 +47,10 @@ export default class ProductDetailParamsList extends Component {
 		}
 	}
 
-	_renderItem = (arr,i) => {
+	_renderItem = (arr: Array,i: number): element => {
 		const {selectedAttrKeyArr} = this.state;
 		let Element = [];
-		arr.map((item,index)=>{
+		arr.forEach((item: Object,index)=>{
 			const backgroundColor = item.key === selectedAttrKeyArr[i] ? Colors.themeColor : '#ccc';
 			Element.push(
 				<TouchableWithoutFeedback 
@@ -70,9 +70,9 @@ export default class ProductDetailParamsList extends Component {
 		return Element;
 	}
 
-	_renderList = arr => {
+	_renderList = (arr: Array): element => {
 		let Element = [];
-		arr.map((item,index)=>{
+		arr.forEach((item: Object,index)=>{
 			Element.push (
 				<View key={'_params_list_'+index}>
 					<Text style={{
@@ -102,8 +102,8 @@ export default class ProductDetailParamsList extends Component {
 				marginTop: 100,
 				paddingBottom: 10,
 				paddingHorizontal: 10,
-				borderBottomWidth: 0.5,
-				borderColor: '#ccc'
+				borderBottomWidth: 1/PixelRatio.get(),
+				borderColor: Colors.weakGrayColor
 			}}>
 				{this._renderList(customAttr)}
 			</View>

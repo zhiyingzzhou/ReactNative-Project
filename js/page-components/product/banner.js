@@ -8,7 +8,7 @@ export default class Banner extends Component {
 		return nextProps.data !== this.props.data;
 	}
 
-	_jumpToDetailPage = productId => {
+	_jumpToDetailPage = (productId: number): void=> {
 		const {navigator} = this.props;
 		navigator.push({
 			title:'商品详情',
@@ -35,7 +35,7 @@ export default class Banner extends Component {
 				autoplayTimeout={5}
 			>
 				{
-					data.map((item,index)=>{
+					data.map((item: Object,index)=>{
 						return (
 								<TouchableWithoutFeedback
 									key={'_banner_'+index}

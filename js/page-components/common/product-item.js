@@ -21,7 +21,7 @@ export default class ProductItem extends Component {
 		data: PropTypes.object.isRequired
 	};
 
-	_jumpToDetailPage = () => {
+	_jumpToDetailPage = (): void=> {
 		const {data,navigator} = this.props;
 		navigator.push({
 			title:'商品详情',
@@ -68,11 +68,6 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		paddingVertical: 8,
 		alignItems: 'center',
-	},
-	containerWithBottom: {
-		borderBottomWidth: 0.5,
-		borderColor: '#ccc',
-		borderStyle: 'solid'
 	},
 	rightContainer: {
 		flex: 1,

@@ -1,64 +1,48 @@
 import React , { Component } from 'react';
-import { View , Text , Animated , Easing , StyleSheet , Dimensions , TouchableHighlight } from 'react-native';
+import {View,Text,Animated,Easing,StyleSheet} from 'react-native';
 
-const screen = Dimensions.get('window');
-const height = screen.height - 50;
-export default class AnimatedComponent extends Component {
-	state = {
-		translateY: new Animated.Value(0)
+export default class AnimatedView extends Component {
+	constructor(props){
+		super(props);
+		this.state = {
+			fadeInOpacity: new Animated.Value(0),
+			rotation: new Animated.Value(0),
+			fontSize: new Animated.Value(0)
+		}
 	}
 	componentDidMount() {
-		
-    }
-    _startAnimated = () => {
-    	Animated.timing(this.state.translateY,{
-			toValue: 1,
-			duration: 300,
-			easing: Easing.linear
-		}).start();
-    }
+		const timing = Animated.timing;
+		Animated.parallel(['fadeInOpacity','rotation','fontSize'].map(property=>{
+			return timing(this.state[property],{
+				toValue: 1,
+				duration: 1000
+			})
+		})).start();
+	}
 	render() {
-		
 		return (
-			<View style={{
-				flex: 1,
-				backgroundColor: '#CCC'
-			}}>
-				<TouchableHighlight onPress={this._startAnimated}>
-					<View style={styles.button}>
-						<Text style={{color:'#FFF'}}>开始动画</Text>
-					</View>
-				</TouchableHighlight>
-				<Animated.View style={[styles.animatedView,{
-					transform: [{
-						translateY:this.state.translateY.interpolate({
-							inputRange: [0,1],
-							outputRange: [height,50]
-						})
-					}]
-				}]}>
-					<View>
-						<Text>商品属性</Text>
-					</View>
-				</Animated.View>
-			</View>
-		);
+			<Animated.View style={[styles.container,{
+				opacity: this.state.fadeInOpacity,
+				transform: [{
+					rotateZ: this.state.rotation.interpolate({
+						inputRange: [0,1],
+						outputRange: ['0deg','360deg']
+					})
+				}]
+			}]}>
+				<Text style={styles.text}>1212</Text>
+			</Animated.View>
+		)
 	}
 }
 
 const styles = StyleSheet.create({
-	button: {
-		width: 100,
-		height: 50,
-		backgroundColor: 'blue',
+	container: {
+		flex: 1,
 		alignItems: 'center',
 		justifyContent: 'center'
 	},
-    animatedView: {
-    	flex: 1,
-		backgroundColor: 'green',
-		transform: [{
-			translateY: height
-		}]
-    },
+	text: {
+		fontSize: 20
+	}
 });

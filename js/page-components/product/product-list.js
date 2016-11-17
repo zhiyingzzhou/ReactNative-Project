@@ -1,13 +1,14 @@
 import React , { Component } from 'react';
-import { ListView , StyleSheet } from 'react-native';
+import { ListView , StyleSheet , PixelRatio } from 'react-native';
 import ProductItem from '../common/product-item';
+import {Colors} from '../../common';
 export default class ProductList extends Component {
 
 	shouldComponentUpdate(nextProps, nextState) {
 		return nextProps.data !== this.props.data;
 	}
 
-	_renderRow = (rowData,sectionID,rowID) => {
+	_renderRow = (rowData: Object,sectionID: string,rowID: string) => {
 		{/*渲染每一个列表*/}
 		const {data} = this.props;
 		{/*如果为列表中的最后一行,不添加bottom-border*/}
@@ -36,8 +37,8 @@ export default class ProductList extends Component {
 
 const styles = StyleSheet.create({
 	containerWithBottom: {
-		borderBottomWidth: 0.5,
-		borderColor: '#ccc',
+		borderBottomWidth: 1/PixelRatio.get(),
+		borderColor: Colors.weakGrayColor,
 		borderStyle: 'solid'
 	},
 });

@@ -6,29 +6,25 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import U from '../../utils/util';
 import {Colors} from '../../common';
 
-class CartNumber extends Component {
+class CartNumberComponent extends Component {
 
 	static defaultProps = {
-		number: 8
+		cartNumber: 0
 	};
 
-	shouldComponentUpdate(nextProps, nextState) {
-		return nextProps !== this.props;
-	}
-
 	static propTypes = {
-		number: PropTypes.number
+		cartNumber: PropTypes.number
 	}
 
 	render() {
-		const {number} = this.props;
-		if(!number){
+		const {cartNumber} = this.props;
+		if(!cartNumber){
 			return null;
 		}
-		const style = number >= 10 ? {fontSize: 10} : {fontSize: 12};
+		const style = cartNumber >= 10 ? {fontSize: 10} : {fontSize: 12};
 		return (
 			<View style={[styles.cartNumber,styles.center]}>
-				<Text style={[styles.cartNumberText,style]}>{number}</Text>
+				<Text style={[styles.cartNumberText,style]}>{cartNumber}</Text>
 			</View>
 		);
 	}
@@ -36,25 +32,30 @@ class CartNumber extends Component {
 
 export default class ToolBar extends Component {
 
+	shouldComponentUpdate(nextProps, nextState) {
+		return nextProps !== this.props;
+	}
+
 	_jumpToCartPage = () => {
-		const {navigator} = this.props;
+		const {navigator,cartNumber} = this.props;
 		if(navigator){
 			InteractionManager.runAfterInteractions(()=>{
 				navigator.push({
 					title: '购物车',
-					name: 'cart'
+					name: 'cart',
+					params: {cartNumber:cartNumber}
 				});
 			});
 		}
 	}
 
 	_addProductHandler = () => {
-		const {showModal,data} = this.props;
-		const {customAttr} = data;
-		if(customAttr&&customAttr.length > 0&&showModal){
+		const {showModal,data,addProductToCart} = this.props,
+		customAttrArr = data.customAttr.length >0 ? JSON.parse(data.customAttr) : [];
+		if(customAttrArr.length > 0&&showModal){
 			showModal();
 		}else{
-			alert('加入购物车');
+			addProductToCart(Object.assign({},data,{selectedAttrKeyArr:[]}));
 		}
 	}
 
@@ -70,7 +71,7 @@ export default class ToolBar extends Component {
 							size={20}
 						/>
 						<Text style={styles.cartText}>购物车</Text>
-						<CartNumber />
+						<CartNumberComponent cartNumber={this.props.cartNumber} />
 					</View>
 				</TouchableOpacity>
 				<View style={[styles.favorite , styles.center , styles.borderRight]}>
