@@ -9,35 +9,23 @@ import {View,
 	Animated
 } from 'react-native';
 import _ from 'lodash';
+import {connect} from 'react-redux';
 import {Page,BackNavBar} from '../components';
-import {CartItem,CartTabbar} from '../page-components/cart';
-import {getBatchCartDataWithIds} from '../actions';
+import {CartItem,CartTabbar,CartEmpty} from '../page-components/cart';
+import {loadCartData,updateCartNumber,deleteProductFromCart,selectProduct} from '../actions';
 
-export default class CartPage extends Component {
+class CartPage extends Component {
 
 	state = {
-		initialData: [],
-		cartData: new ListView.DataSource({
-			rowHasChanged: (row1,row2) => row1 !== row2
-		}),
 		Animatedbottom: new Animated.Value(0),
 		rightNavigatorText: '编辑',
-		totalPriceAndtotalCount: {
-			price: 0,
-			count: 0
-		}
+	}
+	
+	static defaultProps = {
+		data: [],
+		loaded: false
 	}
 
-	_productCheckboxRef = [];
-	_tarbarCheckboxRef = null;
-
-	//保存选中商品的总数
-	totalCount = 0;
-	//保存选中商品的总价
-	totalPrice = 0;
-
-	//在内存中保存用户选中的商品
-	saveData = [];
 	//初始化请求数据索引为0
 	start = 0;
 	//打开的rowId
@@ -46,10 +34,12 @@ export default class CartPage extends Component {
 	_dataRow = [];
 	//关闭row
 	_closeRow = (): void=> {
-		const {_dataRow,openRowId} = this;
-		if(openRowId&&openRowId.length > 0){
-			this._dataRow[openRowId]._close();
-		}
+		InteractionManager.runAfterInteractions(()=>{
+			const {_dataRow,openRowId} = this;
+			if(openRowId&&openRowId.length > 0){
+				this._dataRow[openRowId]._close();
+			}
+		});
 	}
 
 	_editCart = (title: string,value: number): void=> {
@@ -66,121 +56,110 @@ export default class CartPage extends Component {
 		});
 	}
 
-	_generateIds(start: number): Array {
-		const {cartNumber} = this.props.params,
-		end: number = start + 10 >= cartNumber ? start + cartNumber%10 : start + 10;
-		let ids = [];
-		for(var i=start;i<end;i++){
-			ids.push(i);
-		}
-		return ids;
-	}
-
 	componentDidMount() {
-		this.fetchData();
-	}
-
-	fetchData = (): void=>{
 		InteractionManager.runAfterInteractions(()=>{
-			getBatchCartDataWithIds(this._generateIds(this.start))
-			.then((data: Array): void=>{
-				data.forEach(item=>item.isSelected = false);
-				const concatData = this.state.initialData.concat(data);
-				this.setState({
-					initialData: concatData,
-					cartData: this.state.cartData.cloneWithRows(concatData)
-				});
-			},err=>{
-				if(err.name === 'NotFoundError'){
-					ToastAndroid.show('没有更多数据了!',ToastAndroid.SHORT);
-				}
-			})
+			this.fetchData();
 		});
 	}
 
-	_onEndReached = (): void=> {
-		this.start += 10;
-		this.fetchData();
+	shouldComponentUpdate(nextProps, nextState) {
+		return nextProps.dataBlob !== this.props.dataBlob || nextState !== this.state;
 	}
 
-	_triggerPriceAndCount = (): void=> {
-		this.setState({
-			totalPriceAndtotalCount:{
-				price: this.totalPrice,
-				count: this.totalCount
-			}
-		});
-	}
-
-	_listenerCheckBoxState = (isSelected: bool): void=> {
-		const {_tarbarCheckboxRef,_productCheckboxRef} = this;
-		if(_tarbarCheckboxRef.state.value && !isSelected){
-			_tarbarCheckboxRef._setCheckBoxDrak();
-		}
-		if(!_tarbarCheckboxRef.state.value&&isSelected){
-			let noSelectCheckBoxNumber = 0;
-			_productCheckboxRef.forEach(item=>{
-				if(item.state.value === false){
-					noSelectCheckBoxNumber ++;
-				}
-			});
-			if(noSelectCheckBoxNumber-1 === 0){
-				_tarbarCheckboxRef._setCheckBoxHighlight();
-			}
-		}
-	}
-
-	_AddPriceAndCount = (data: Object): void=> {
-		this.totalPrice += data.price;
-		this.totalCount += data.count;
-		this._triggerPriceAndCount();
-	}
-
-	_minusPriceAndCount = (data: Object): void=> {
-		this.totalPrice -= data.price;
-		this.totalCount -= data.count;
-		this._triggerPriceAndCount();
+	 fetchData = (): void=>{
+		this.props.loadCartData(0);
 	}
 
 	_renderRow = (rowData: Object,sectionId: string,rowId: string) => {
 		let id: string= '' + sectionId + rowId;
 		return (
 			<CartItem 
-				rowData={rowData}
+				{...this.props}
+				index={rowId}
+				data={rowData}
 				rowId={id}
-				root={this} 
+				root={this}
 			/>
 		);
 	}
 
+	_calcPriceAndCount = () => {
+		let totalCount: number = 0,
+		totalPrice: number = 0,
+		{dataBlob=[]} = this.props,
+		selectedProduct: Array<Object>= _.filter(dataBlob,{isSelected:1});
+		return _.reduce(selectedProduct,(pre,cur)=>{
+			const {count,price} = cur;
+			return {price:pre.price+count*price,count:pre.count+count}
+		},{price:0,count:0});
+	}
+
+	_calcIsSelectAll = (): boolean => {
+		let {dataBlob} = this.props,
+		isSelectAll = _.find(dataBlob,{isSelected:0});
+		if(!isSelectAll){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	_onPress = () =>{
+		const {navigator} = this.props;
+		navigator.pop();
+	}
+
 	render() {
-		const {cartData,Animatedbottom,rightNavigatorText,totalPriceAndtotalCount} = this.state,
+		const {cartData,loaded,dataBlob} = this.props,
+		totalPriceAndtotalCount: Object= this._calcPriceAndCount(),
+		isSelectAll: boolean = this._calcIsSelectAll(),
+		{Animatedbottom,rightNavigatorText} = this.state;
 		onPressHandler = rightNavigatorText === '编辑' ? 
 		this._editCart.bind(this,'完成',1) : 
 		this._editCart.bind(this,'编辑',0);
+		
 		return (
 			<Page>
 				<BackNavBar 
 					{...this.props} 
 					rightButton={{title:rightNavigatorText,tintColor:'#FFF',onPress:onPressHandler}}
 				/>
-					{cartData._cachedRowCount > 0 &&
+					{loaded&&dataBlob.length > 0 &&
 						<ListView 
 							dataSource={cartData}
 							renderRow={this._renderRow}
-							onEndReached={this._onEndReached}
-							onEndReachedThreshold={0}
+							showsVerticalScrollIndicator={false}
 							style={{
 								marginBottom: 50
 							}}
 						/>
 					}
-				<CartTabbar
-					root={this}
-					Animatedbottom={Animatedbottom}
-					totalPriceAndtotalCount={totalPriceAndtotalCount}
-				/>
+				{loaded&&dataBlob.length > 0 &&
+					<CartTabbar
+						root={this}
+						Animatedbottom={Animatedbottom}
+						totalPriceAndtotalCount={totalPriceAndtotalCount}
+						isSelectAll={isSelectAll}
+						selectProduct={this.props.selectProduct}
+					/>
+				}
+				{loaded&&dataBlob.length === 0 &&
+					<CartEmpty onPress={this._onPress} />
+				}
 			</Page>
 		);
 	}
 }
+
+function mapStateToProps(state){
+	return state.cart;
+}
+function mapDispatchToProps(dispatch){
+	return {
+		updateCartNumber: (arg) => dispatch(updateCartNumber(arg)),
+		loadCartData: (start) => dispatch(loadCartData(start)),
+		deleteProductFromCart: (arg) => dispatch(deleteProductFromCart(arg)),
+		selectProduct: (data,isSelected) => dispatch(selectProduct(data,isSelected))
+	}
+}
+export default connect(mapStateToProps,mapDispatchToProps)(CartPage);

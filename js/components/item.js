@@ -34,8 +34,8 @@ export default class ItemCompoennt extends Component {
 									{title}
 								</Text>
 								<View style={styles.after}>
-									{after&&
-										<Text style={styles.afterText}>{after}</Text>
+									{typeof after === 'string' &&
+									<Text style={styles.afterText}>{after}</Text>
 									}
 									{link&&
 										<Icon 

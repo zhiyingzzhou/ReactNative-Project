@@ -1,5 +1,13 @@
 import React , { Component } from 'react';
-import {View,Text,Image,StyleSheet,PanResponder,Animated,PixelRatio,TouchableOpacity} from 'react-native';
+import {View,
+	Text,
+	Image,
+	StyleSheet,
+	Animated,
+	PixelRatio,
+	ToastAndroid,
+	TouchableOpacity,
+	InteractionManager} from 'react-native';
 import {CheckBox,SwipeOut} from '../../components';
 
 import {Colors} from '../../common';
@@ -17,34 +25,42 @@ type val = {
 
 export default class CartItem extends Component {
 
+
 	static defaultProps = {
-		rowData: {data:{}}
+		data: {},
 	}
 
 	shouldComponentUpdate(nextProps, nextState) {
-		return nextProps.rowData !== this.props.rowData;
+		return nextProps.data !== this.props.data;
 	}
 
-	_rightButtonConfigure(): Array{
+	_rightButtonConfigure =(): Array =>{
 		return [
 			{
 				text: '删除',
 				tintColor: '#FFF',
 				style:{backgroundColor:'rgb(239, 3, 28)'},
-				onPress: () => {alert('test');},
+				onPress: () => this._deleteProductFromCart(),
 				underlayColor: '#FFF'
 			}
 		]
 	}
 
+	_deleteProductFromCart = () => {
+		const {deleteProductFromCart,data,root} = this._getVariables();
+		root._closeRow();
+		deleteProductFromCart(data);
+	}
+
 	_getAttrText = (data: Object): string=> {
-		let attrText: string= '',
+		let attrText: string= '', 
 		{customAttr,selectedAttrKeyArr} = data,
-		customAttrArr: Array = customAttr && JSON.parse(customAttr);
-		if(selectedAttrKeyArr&&selectedAttrKeyArr.length>0){
+		customAttrArr: Array = customAttr && JSON.parse(customAttr),
+		attrKeyArr = JSON.parse(selectedAttrKeyArr);
+		if(attrKeyArr&&attrKeyArr.length>0){
 			customAttrArr.forEach((item: attr,index)=>{
 				item.val.forEach((val: val)=>{
-					if(val.key === selectedAttrKeyArr[index]){
+					if(val.key === attrKeyArr[index]){
 						attrText += item.text + ':' + val.val;
 					}
 				});
@@ -52,26 +68,62 @@ export default class CartItem extends Component {
 					attrText += ',';
 				}
 			});
-			return attrText.length > 20 ? attrText.substr(0,20)+'...' : attrText;
+			return attrText.length > 16 ? attrText.substr(0,16)+'...' : attrText;
 		}
 		return '';
 	}
 
-	_checkEvent = (data: Object): void => {
-		const {root} = this.props;
-		root._listenerCheckBoxState(true);
-		root._AddPriceAndCount(data);
+	_getVariables() {
+		const {data,root,index,deleteProductFromCart,updateCartNumber,selectProduct} = this.props;
+		return {
+			root: root,
+			index: index,
+			count: data.count,
+			stock: data.stock,
+			data: data,
+			deleteProductFromCart: deleteProductFromCart,
+			updateCartNumber: updateCartNumber,
+			selectProduct: selectProduct
+		}
 	}
 
-	_unCheckEvent = (data: Object): void=> {
-		const {root} = this.props;
-		root._listenerCheckBoxState(false);
-		root._minusPriceAndCount(data);
+	_minusCountNumber = (): void => {
+		const {root,index,count,updateCartNumber,data} = this._getVariables();
+		//这里判断大于0,因为从props里有大于等于1的初始值
+		if(count > 0){
+			updateCartNumber(Object.assign({},data,{
+				count: count - 2
+			}));
+		}
+		root._closeRow();
+	}
+
+	_addCountNumber = () => {
+		const {root,count,stock,updateCartNumber,data} = this._getVariables();
+		if(count >= stock){
+			ToastAndroid.show('购买数量不能超过库存!',ToastAndroid.SHORT);
+			root._closeRow();
+			return false;
+		}
+		root._closeRow();
+		updateCartNumber(data);
+	}
+
+	_checkEvent = (): void => {
+		const {selectProduct,data,root} = this._getVariables();
+		root._closeRow();
+		selectProduct(data,1);
+	}
+
+	_unCheckEvent = (): void=> {
+		const {selectProduct,data,root} = this._getVariables();
+		root._closeRow();
+		selectProduct(data,0);
 	}
 
 	render() {
-		const {rowData,rowId,root} = this.props,
-		{data,count} = rowData;
+		const {count,data,root} = this._getVariables(),
+		{rowId} = this.props;
 		return (
 			<SwipeOut 
 				rowId={rowId}
@@ -85,10 +137,8 @@ export default class CartItem extends Component {
 			>
 				<View style={styles.container}>
 					<CheckBox 
-						ref={ref=>root._productCheckboxRef.push(ref)}
-						defaultValue={false}
+						value={Boolean(data.isSelected)}
 						style={{marginRight:10}}
-						data={{count:count,price:data.price}}
 						checkEvent={this._checkEvent}
 						unCheckEvent={this._unCheckEvent}
 					/>
@@ -114,7 +164,9 @@ export default class CartItem extends Component {
 									</View>
 								</TouchableOpacity>
 								<View style={styles.actionBox}>
-									<Text style={styles.numberText}>{rowData.count}</Text>
+									<Text style={styles.numberText}>
+										{count}
+									</Text>
 								</View>
 								<TouchableOpacity onPress={this._addCountNumber}>
 									<View style={styles.actionBox}>

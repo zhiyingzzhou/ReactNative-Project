@@ -15,8 +15,7 @@ export default class ProductDetailhead extends Component {
 		return nextProps.data !== this.props.data;
 	}
 
-	_renderPics(){
-		const {data} = this.props;
+	_renderPics(data){
 		return  (
 					<Swiper 
 						autoplay={false}
@@ -49,12 +48,12 @@ export default class ProductDetailhead extends Component {
 
 	render() {
 		const {data} = this.props;
-		if(data.pics&&data.pics.length === 0 ){
+		if(!data.pics || data.pics.length === 0){
 			return null;
 		}
 		return 	(
 					<View style={styles.container}>
-						{this._renderPics()}
+						{this._renderPics(data)}
 						<View style={{
 							paddingHorizontal: 15,
 							paddingVertical: 10

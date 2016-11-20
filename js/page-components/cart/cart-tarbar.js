@@ -12,37 +12,33 @@ export default class CartTarbarPage extends Component {
 	}
 
 	_checkEvent = (type: string): void=> {
-		const {root} = this.props;
-		root._productCheckboxRef.forEach(item=>{
-			if(type === 'check'&&item.state.value === false){
-				item._setCheckBoxHighlight();
-				root._AddPriceAndCount(item.props.data);
-			}
-			if(type === 'uncheck'&&item.state.value === true){
-				item._setCheckBoxDrak();
-				root._minusPriceAndCount(item.props.data);
-			}
-		});
-
+		const {selectProduct,root} = this.props;
+		switch(type){
+			case 'check':
+				selectProduct({isSelectAll:true});
+				break;
+			case 'uncheck':
+				selectProduct({isSelectAll:false},1);
+				break;
+		}
+		root._closeRow();
 	}
 
 	render() {
-		const {Animatedbottom,totalPriceAndtotalCount,root,tarbarCheckboxValue} = this.props;
+		const {Animatedbottom,totalPriceAndtotalCount,isSelectAll} = this.props;
 		return (
 			<View style={styles.container}>
-				<View style={styles.rightContainer}>
+				<View style={styles.leftContainer}>
 					<CheckBox 
-						ref={ref=>root._tarbarCheckboxRef = ref}
-						value={false}
+						value={isSelectAll}
 						checkEvent={this._checkEvent.bind(this,'check')}
 						unCheckEvent={this._checkEvent.bind(this,'uncheck')}
-						tarbarCheckboxValue={tarbarCheckboxValue}
 					/>
 					<Text style={{
 						marginLeft: 6
 					}}>全选</Text>
 				</View>
-				<Animated.View style={[styles.leftContainer,{
+				<Animated.View style={[styles.rightContainer,{
 					bottom: Animatedbottom.interpolate({
 						inputRange: [0,1],
 						outputRange: [0,50]
@@ -58,10 +54,7 @@ export default class CartTarbarPage extends Component {
 							<Text style={styles.priceText}>不含运费</Text>
 						</View>
 					</View>
-					<View style={[styles.actionContainer,{
-						width: width*.5,
-						alignItems: 'center'
-					}]}>
+					<View style={styles.actionContainer}>
 						<Text style={styles.actionText}>
 							结算({totalPriceAndtotalCount.count})
 						</Text>
@@ -100,12 +93,12 @@ const styles = StyleSheet.create({
 		paddingHorizontal: 10,
 		backgroundColor: '#FFF',
 	},
-	rightContainer: {
+	leftContainer: {
 		flexDirection: 'row',
 		width: width*.3,
 		alignItems: 'center'
 	},
-	leftContainer: {
+	rightContainer: {
 		flexDirection: 'row',
 		width: width*.7,
 		position: 'relative',

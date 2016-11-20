@@ -1,11 +1,11 @@
 import React , { Component , PropTypes } from 'react';
 import {ScrollView,RefreshControl} from 'react-native';
-
+import {Colors} from '../common';
 export default class ScrollViewWithRefreshControl extends Component {
 	static defaultProps = {
 		refreshing:false,
-		onRefresh:()=>{},
-		progressViewOffset:0,
+		onRefresh: () => {},
+		progressViewOffset:0
 	};
 	static propTypes = {
 		refreshing: PropTypes.bool,
@@ -13,19 +13,24 @@ export default class ScrollViewWithRefreshControl extends Component {
 		progressViewOffset: PropTypes.number
 	};
 
+	_onScroll = (evt,gestureState) => {
+	}
+
 	render() {
-		const {refreshing,onRefresh,progressViewOffset,children} = this.props;
+		const {refreshing,onRefresh,progressViewOffset,
+			children} = this.props;
 		return (
 			<ScrollView
 				refreshControl={
 					<RefreshControl 
 						refreshing={refreshing}
 						onRefresh={onRefresh}
-						colors={['#FFF']}
+						colors={Colors.progressColors}
 						progressViewOffset={progressViewOffset}
-						progressBackgroundColor="#183C87"
+						progressBackgroundColor={Colors.progressBackgroundColor}
 					/>
 				}
+				onScroll={this._onScroll}
 			>
 				{children}
 			</ScrollView>

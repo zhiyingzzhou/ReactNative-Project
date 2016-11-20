@@ -99,8 +99,7 @@ export default class CategoryTab extends Component {
 const styles = StyleSheet.create({
 	tab: {
 		flexDirection: 'row',
-		backgroundColor: '#FFF',
-		marginBottom: 10
+		backgroundColor: '#FFF'
 	},
 	tabItem: {
 		flexDirection: 'row',

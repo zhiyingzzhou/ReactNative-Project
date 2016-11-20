@@ -56,7 +56,7 @@ export default class NavbarComponent extends Component {
 	getButtonElement = (data={}) => {
 		if(!!data.props) {
 			return (
-				<View>
+				<View style={styles.navBarButtonContainer}>
 					{data}
 				</View>
 			)
@@ -64,7 +64,7 @@ export default class NavbarComponent extends Component {
 		const colorStyle = data.tintColor ? {color:data.tintColor} : null;
 		const style = data.style ? data.style : styles.navBarButtonText;
 
-		const rightButtonElement = (
+		const leftButtonElement = (
 			<View style={styles.navBarButtonContainer}>
 				<Text style={[style,colorStyle,]}>
 					{data.title}
@@ -74,10 +74,10 @@ export default class NavbarComponent extends Component {
 
 		if(data.onPress){
 			return 	<TouchWrapper onPress={data.onPress}>
-						{rightButtonElement}
+						{leftButtonElement}
 					</TouchWrapper>
 		}else{
-			return rightButtonElement;
+			return leftButtonElement;
 		}
 	}
 

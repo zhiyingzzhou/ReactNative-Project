@@ -33,7 +33,6 @@ class ProductDetailpage extends Component {
 		//获取数据
 		InteractionManager.runAfterInteractions(()=>{
 			this.fetchData();
-			//获取购物车数量
 			if(!cartNumber){
 				loadCartNumber();
 			}

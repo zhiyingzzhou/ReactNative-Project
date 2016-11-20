@@ -1,5 +1,5 @@
 import React , { Component } from 'react';
-import { View , Text , StyleSheet , Image , TouchableNativeFeedback } from 'react-native';
+import { View , Text , StyleSheet , Image , TouchableOpacity } from 'react-native';
 import Swiper from 'react-native-swiper';
 import U from '../../utils/util';
 
@@ -24,7 +24,7 @@ export default class CategoryRow extends Component {
 			let rowData: Array= data.slice(pageIndex*10+i*5,pageIndex*10+i*5+5);
 			element.push(
 				rowData.map((item,index)=>{
-					return 	<TouchableNativeFeedback
+					return 	<TouchableOpacity
 								onPress={()=>this._jumpToCategoryPage(item)}
 							>
 								<View 
@@ -42,7 +42,7 @@ export default class CategoryRow extends Component {
 										marginTop: 5
 									}}>{item.name}</Text>
 								</View>
-							</TouchableNativeFeedback>
+							</TouchableOpacity>
 				},this)
 			)
 		}

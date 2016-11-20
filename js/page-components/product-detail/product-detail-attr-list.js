@@ -3,7 +3,7 @@ import {View,Text,StyleSheet,TouchableWithoutFeedback,PixelRatio} from 'react-na
 
 import {Colors} from '../../common';
 
-export default class ProductDetailParamsList extends Component {
+export default class ProductDetailAttrList extends Component {
 
 	state = {
 		customAttr:[]

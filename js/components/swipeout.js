@@ -68,9 +68,9 @@ export default class Swipeout extends Component {
   		if(this.state.isOpen){
 		 	dx = -this._getRightButtonContainerWidth() + dx;
 	 	}
-	 	if(dx <= 0 || this.state.RowTranslateX._value !== 0){
-	 		this.setState({
-		 		RowTranslateX: new Animated.Value(dx)
+	 	if(dx <= 0 || this.state.RowTranslateX !== 0){
+ 			this.setState({
+	 			RowTranslateX: new Animated.Value(dx)
 			});
 	 	}
 	}
@@ -177,7 +177,7 @@ export default class Swipeout extends Component {
 				}]}>
 					{this._renderRightButton()}
 				</View>
-				<Animated.View {...this._onPanResponder.panHandlers} style={{
+				<Animated.View ref="animted" {...this._onPanResponder.panHandlers} style={{
 					transform: [{
 						translateX: this.state.RowTranslateX
 					}]

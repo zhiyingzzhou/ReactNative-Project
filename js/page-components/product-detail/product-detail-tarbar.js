@@ -39,12 +39,10 @@ export default class ToolBar extends Component {
 	_jumpToCartPage = () => {
 		const {navigator,cartNumber} = this.props;
 		if(navigator){
-			InteractionManager.runAfterInteractions(()=>{
-				navigator.push({
-					title: '购物车',
-					name: 'cart',
-					params: {cartNumber:cartNumber}
-				});
+			navigator.push({
+				title: '购物车',
+				name: 'cart',
+				params: {cartNumber:cartNumber}
 			});
 		}
 	}
@@ -55,7 +53,7 @@ export default class ToolBar extends Component {
 		if(customAttrArr.length > 0&&showModal){
 			showModal();
 		}else{
-			addProductToCart(Object.assign({},data,{selectedAttrKeyArr:[]}));
+			addProductToCart(Object.assign({},data,{count:1},{selectedAttrKeyArr:[]}));
 		}
 	}
 

@@ -61,7 +61,7 @@
 			.then(responseData => callback ? callback(responseData) : null)
 			.catch(error=>{
 				if(catchFun){
-					catchFun();
+					catchFun(error);
 				}else{
 					console.log('Error:network request failed!');
 				}

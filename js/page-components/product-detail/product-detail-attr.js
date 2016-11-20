@@ -6,9 +6,9 @@ import {View,
 	ScrollView ,
 	Animated
 } from 'react-native';
-import ProductDetailParamsTarbar from './product-detail-params-tarbar';
-import ProductDetailParamsHead from './product-detail-params-head';
-import ProductDetailParamsList from './product-detail-params-list';
+import ProductDetailAttrHead from './product-detail-attr-head';
+import ProductDetailAttrList from './product-detail-attr-list';
+import ProductDetailAttrTarbar from './product-detail-attr-tarbar';
 import ProductDetailAttrCountEditor from './product-detail-attr-count-editor';
 
 import U from '../../utils/util';
@@ -78,7 +78,7 @@ export default class ProductDetailAttr extends Component {
 					backgroundColor: '#FFF',
 				}}>
 					{Object.getOwnPropertyNames(data).length > 0 &&
-						<ProductDetailParamsList 
+						<ProductDetailAttrList 
 							{...this.props} 
 							getPrice = {this._getPrice}
 						/>
@@ -96,12 +96,12 @@ export default class ProductDetailAttr extends Component {
 					backgroundColor: '#FFF'
 				}}>
 				</View>
-				<ProductDetailParamsHead 
+				<ProductDetailAttrHead 
 						{...this.props} 
 						{...this.state}
 						hideModalHandler={this._hideModalHandler} 
 				/>
-				<ProductDetailParamsTarbar
+				<ProductDetailAttrTarbar
 					{...this.props}
 					{...this.state}
 				/>

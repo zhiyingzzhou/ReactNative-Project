@@ -2,16 +2,35 @@ import React , { Component } from 'react';
 import { View , StyleSheet } from 'react-native';
 import Swiper from 'react-native-swiper';
 import CategoryRow from './category-row';
+import {loadCategory} from '../../actions';
 
 export default class Category extends Component {
 	
+	state = {
+		data: []
+	}
+
 	shouldComponentUpdate(nextProps, nextState) {
-		return  this.props.data !== nextProps.data;
+		return  this.state.data !== nextState.data;
+	}
+
+	componentDidMount() {
+		this.fetchData();
+	}
+
+	fetchData() {
+		loadCategory()
+		.then(data=>{
+			this.setState({
+				data: data
+			});
+		})
 	}
 
 	_renderCategory = (): Array=> {
 		let element = [];
-		const {navigator,data} = this.props;
+		const {navigator} = this.props,
+		{data} = this.state;
 		const pageNum = Math.ceil(data.length/10);
 		for(let i=0;i<pageNum;i++){
 			element.push(
@@ -27,7 +46,7 @@ export default class Category extends Component {
 	}
 
 	render() {
-		const {data} = this.props;
+		const {data} = this.state;
 		if(data.length === 0){
 			return null;
 		}

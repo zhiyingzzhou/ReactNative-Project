@@ -17,44 +17,21 @@ export default class Checkbox extends Component {
 		style: PropTypes.oneOfType([PropTypes.array,PropTypes.object,PropTypes.number])
 	}
 
-	componentDidMount() {
-		this.setState({
-			value: this.props.value
-		});
-	}
-
 	shouldComponentUpdate(nextProps, nextState) {
 		return nextState !== this.state || nextProps !== this.props;
 	}
 
 	_onPress = () => {
-		const {checkEvent,unCheckEvent,data={}} = this.props,
-		{value} = this.state;
+		const {checkEvent,unCheckEvent,value} = this.props;
 		if(value){
-			if(unCheckEvent) unCheckEvent(data);
+			if(unCheckEvent) unCheckEvent();
 		}else{
-			if(checkEvent) checkEvent(data);
+			if(checkEvent) checkEvent();
 		}
-		this.setState({
-			value: !value
-		});
-	}
-
-	_setCheckBoxHighlight =() =>{
-		this.setState({
-			value: true
-		});
-	}
-
-	_setCheckBoxDrak=()=>{
-		this.setState({
-			value:false
-		});
 	}
 
 	render() {
-		const {style} = this.props,
-		{value} = this.state;
+		const {style,value} = this.props;
 		return (
 			<TouchableWithoutFeedback onPress={this._onPress}>
 				{!value 

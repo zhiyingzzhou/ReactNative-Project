@@ -1,12 +1,10 @@
 import _ from 'lodash';
 import U from '../utils/util';
 import {ListView} from 'react-native';
-const LOAD_BANNER: string = 'LOAD_BANNER';
-const LOAD_CATEGORY: string = 'LOAD_CATEGORY';
 const LOAD_LIST: string = 'LOAD_LIST';
 
 const loadBanner = (): void => {
-	return dispatch => {
+	return new Promise((resolve,reject)=>{
 		U.get('products/category/client',{
 				limit: 5,
 				where:'{"$and":[{"valid":true},{"banner":true}]}',
@@ -16,35 +14,26 @@ const loadBanner = (): void => {
 			_.map(data,(item,index)=>{
 				bannerData = bannerData.concat(item.results);
 			});
-			dispatch({
-				type: LOAD_BANNER,
-				bannerData,
-				bannerLoaded: true
-			});
-		},()=>{
-			
+			resolve(bannerData);
+		},(err)=>{
+			reject(err);
 		});
-
-	}
+	});
 }
 
 const loadCategory = (): void => {
-	return dispatch => {
+	return new Promise((resolve,reject)=>{
 		U.get('category',{
 			where:'{"$and":[{"valid":true},{"recommend":true}]}',
 			order:'+seq',
 			limit:999,
 			skip:0
 		},data=>{
-			dispatch({
-				type: LOAD_CATEGORY,
-				categoryData:data.results,
-				categoryLoaded:true
-			});
-		},()=>{
-			
+			resolve(data.results);
+		},(err)=>{
+			reject(err);
 		});
-	}
+	});
 }
 
 const loadList = (): void => {

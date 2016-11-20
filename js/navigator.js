@@ -1,5 +1,5 @@
 import React , { Component } from 'react';
-import {Navigator,BackAndroid} from 'react-native';
+import {Navigator,BackAndroid,InteractionManager,ToastAndroid} from 'react-native';
 
 import HomePage from './pages/homepage';
 import ProductDetailPage from './pages/product-detail';
@@ -27,8 +27,10 @@ export default class AppNavigator extends Component {
   	handleBackButton = (): bool => {
   		const {navigator} = this.refs;
 	    if (navigator && navigator.getCurrentRoutes().length > 1) {
-	      navigator.pop();
-	      return true;
+	    	InteractionManager.runAfterInteractions(()=>{
+	    		navigator.pop();
+	    	});
+	      	return true;
 	    }
 	    if(navigator && navigator.getCurrentRoutes().length == 1){
 	    	if (this.lastBackPressed && this.lastBackPressed + 2000 >= Date.now()) {

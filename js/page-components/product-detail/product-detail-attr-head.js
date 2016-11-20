@@ -6,7 +6,7 @@ import {Colors} from '../../common';
 const pageHeight = U.getPageHeight(),
 width = U.getScreenWidth();
 
-export default class ProductDetailParamsHead extends Component {
+export default class ProductDetailAttrHead extends Component {
 
 	shouldComponentUpdate(nextProps, nextState) {
 		return nextProps.priceAndStock !== this.props.priceAndStock;
