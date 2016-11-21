@@ -72,8 +72,10 @@ export default class CartTarbarPage extends Component {
 						outputRange: [-50,0]
 					})
 				}}>
-					<View style={styles.actionContainer}>
-						<Text style={styles.actionText}>移到收藏</Text>
+					<View style={[styles.actionContainer,{
+						backgroundColor: '#7C7C7C'
+					}]}>
+						<Text style={[styles.actionText]}>移到收藏</Text>
 					</View>
 					<View style={styles.actionContainer}>
 						<Text style={styles.actionText}>删除</Text>
@@ -116,7 +118,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		height: 50,
-		width: width*.4,
+		width: width*.35,
 		backgroundColor: Colors.buttonColor,
 	},
 	actionText: {

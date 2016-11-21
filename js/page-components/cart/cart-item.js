@@ -37,6 +37,13 @@ export default class CartItem extends Component {
 	_rightButtonConfigure =(): Array =>{
 		return [
 			{
+				text: '移到收藏',
+				tintColor: '#FFF',
+				style:{backgroundColor:'#7C7C7C'}, 
+				onPress: () => {ToastAndroid.show('收藏成功',ToastAndroid.SHORT);this.props.root._closeRow()},
+				underlayColor: '#FFF'
+			},
+			{
 				text: '删除',
 				tintColor: '#FFF',
 				style:{backgroundColor:'rgb(239, 3, 28)'},
